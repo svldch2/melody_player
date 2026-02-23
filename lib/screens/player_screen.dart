@@ -12,8 +12,6 @@ class PlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('📱 [PlayerScreen] build: ${song.title}');
-
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
@@ -60,7 +58,7 @@ class PlayerScreen extends StatelessWidget {
     );
   }
 
-  /// Секция с обложкой (круг + иконка)
+  /// Секция с обложкой (круг + иконка или изображение)
   Expanded _buildAlbumArtSection() {
     return Expanded(
       flex: 3,
@@ -70,8 +68,50 @@ class PlayerScreen extends StatelessWidget {
     );
   }
 
-  /// Круглая обложка с иконкой
-  Container _buildAlbumArt() {
+  /// Круглая обложка — теперь выбирает между иконкой и реальным изображением
+  Widget _buildAlbumArt() {
+    if (song.coverArt != null) {
+      return Container(
+        width: 250,
+        height: 250,
+        decoration: _buildAlbumArtDecoration(),
+        child: ClipOval(
+          child: Image.asset(
+            song.coverArt!,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              print('Не удалось загрузить обложку для ${song.title}: $error');
+              return _buildFallbackIcon();
+            },
+          ),
+        ),
+      );
+    }
+    return _buildFallbackIcon();
+  }
+
+  /// Реальное изображение обложки (упрощенный вариант)
+  Container _buildCoverImage() {
+    return Container(
+      width: 250,
+      height: 250,
+      decoration: _buildAlbumArtDecoration(),
+      child: ClipOval(
+        child: Image.asset(
+          song.coverArt!,
+          fit: BoxFit.cover,
+          // Просто показываем заглушку при ошибке
+          errorBuilder: (context, error, stackTrace) {
+            print('Ошибка загрузки изображения: $error');
+            return _buildFallbackIcon();
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Запасная иконка (когда нет обложки или ошибка загрузки)
+  Container _buildFallbackIcon() {
     return Container(
       width: 250,
       height: 250,
@@ -84,7 +124,7 @@ class PlayerScreen extends StatelessWidget {
     );
   }
 
-  /// Декорация для круглой обложки
+  /// Декорация для круглой обложки (общая для всех вариантов)
   BoxDecoration _buildAlbumArtDecoration() {
     return BoxDecoration(
       shape: BoxShape.circle,

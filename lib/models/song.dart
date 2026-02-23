@@ -2,8 +2,9 @@ class Song {
   final String id;
   final String title;
   final String artist;
-  final String duration; // Пока строкой, потом научимся работать с Duration
-  final String assetPath; // Путь к файлу (пока заглушка)
+  final String duration;
+  final String assetPath; // Путь к аудиофайлу
+  final String? coverArt; // <-- НОВОЕ: путь к обложке (может быть null)
 
   Song({
     required this.id,
@@ -11,9 +12,10 @@ class Song {
     required this.artist,
     required this.duration,
     required this.assetPath,
+    this.coverArt, // Опциональный параметр
   });
 
-  // Временный метод для создания демо-данных
+  // Обновляем мок-данные, добавим пути к обложкам
   static List<Song> getMockSongs() {
     return [
       Song(
@@ -22,6 +24,8 @@ class Song {
         artist: 'Queen',
         duration: '5:55',
         assetPath: 'assets/music/bohemian_rhapsody.mp3',
+        coverArt:
+            'assets/images/square-4121528342.jpg', // Предположим, что такое изображение есть
       ),
       Song(
         id: '2',
@@ -29,6 +33,7 @@ class Song {
         artist: 'Led Zeppelin',
         duration: '8:02',
         assetPath: 'assets/music/stairway_to_heaven.mp3',
+        coverArt: 'assets/images/square-green-4121528342.jpg',
       ),
       Song(
         id: '3',
@@ -36,6 +41,7 @@ class Song {
         artist: 'John Lennon',
         duration: '3:04',
         assetPath: 'assets/music/imagine.mp3',
+        // У этого трека нет обложки (покажем иконку)
       ),
       Song(
         id: '4',
@@ -43,6 +49,7 @@ class Song {
         artist: 'Eagles',
         duration: '6:30',
         assetPath: 'assets/music/hotel_california.mp3',
+        coverArt: 'assets/images/eagles.jpg',
       ),
       Song(
         id: '5',
@@ -50,6 +57,7 @@ class Song {
         artist: 'Ed Sheeran',
         duration: '3:54',
         assetPath: 'assets/music/shape_of_you.mp3',
+        coverArt: 'assets/images/600056-4066200966.png',
       ),
     ];
   }
