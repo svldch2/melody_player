@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/song.dart';
 import '../widgets/player_controls.dart';
+import '../utils/text_styles.dart';
 
 class PlayerScreen extends StatelessWidget {
   final Song song;
@@ -162,37 +163,36 @@ class PlayerScreen extends StatelessWidget {
     );
   }
 
-  /// Название песни (крупное)
+  /// Название песни (крупное, жирное начертание)
   Text _buildSongTitle() {
     return Text(
       song.title,
-      style: const TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
+      style: AppTextStyles.songTitle,
+      textAlign: TextAlign.center,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
     );
   }
 
-  /// Имя исполнителя
+  /// Имя исполнителя (светлое начертание)
   Text _buildArtistName() {
     return Text(
       song.artist,
-      style: TextStyle(
-        fontSize: 18,
-        color: Colors.white.withOpacity(0.8),
+      style: AppTextStyles.artistName.copyWith(
+        color: Colors.white.withOpacity(0.8), // Немного прозрачности
       ),
+      textAlign: TextAlign.center,
     );
   }
 
-  /// Длительность песни
+  /// Длительность песни (обычное начертание)
   Text _buildDuration() {
     return Text(
       song.duration,
-      style: TextStyle(
-        fontSize: 16,
+      style: AppTextStyles.duration.copyWith(
         color: Colors.white.withOpacity(0.6),
       ),
+      textAlign: TextAlign.center,
     );
   }
 }
