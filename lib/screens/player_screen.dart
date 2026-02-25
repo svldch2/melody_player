@@ -15,7 +15,7 @@ class PlayerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: _buildBody(),
+      body: _buildBody(context),
     );
   }
 
@@ -33,12 +33,12 @@ class PlayerScreen extends StatelessWidget {
   }
 
   /// Основное содержимое экрана с градиентом
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return Container(
       decoration: _buildGradient(),
       child: Column(
         children: [
-          _buildAlbumArtSection(),
+          _buildAlbumArtSection(context),
           _buildSongInfoSection(),
         ],
       ),
@@ -59,22 +59,95 @@ class PlayerScreen extends StatelessWidget {
     );
   }
 
-  /// Секция с обложкой (круг + иконка или изображение)
-  Expanded _buildAlbumArtSection() {
+  /// Секция с обложкой и индикатором прогресса
+  Expanded _buildAlbumArtSection(BuildContext context) {
     return Expanded(
       flex: 3,
       child: Center(
-        child: _buildAlbumArt(),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            _buildAlbumArt(context),
+            _buildProgressIndicator(),
+            _buildTimeIndicator(), // Добавим время воспроизведения
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Индикатор прогресса воспроизведения
+  Widget _buildProgressIndicator() {
+    return Positioned(
+      bottom: 20,
+      left: 40,
+      right: 40,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Полоса прогресса
+          Container(
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: 0.3, // Временно 30% для демонстрации
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Индикаторы времени (текущее / общее)
+  Widget _buildTimeIndicator() {
+    return Positioned(
+      bottom: 40,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '1:23', // Текущее время
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 12,
+              fontFamily: 'Montserrat',
+            ),
+          ),
+          const SizedBox(width: 150), // Пространство под полосу
+          Text(
+            song.duration, // Общее время
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 12,
+              fontFamily: 'Montserrat',
+            ),
+          ),
+        ],
       ),
     );
   }
 
   /// Круглая обложка — теперь выбирает между иконкой и реальным изображением
-  Widget _buildAlbumArt() {
+  Widget _buildAlbumArt(BuildContext context) {
+    // Получаем размер экрана
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Обложка не больше 250 и не меньше 200, но пропорциональна экрану
+    // final albumSize = screenWidth * 0.6.clamp(200.0, 250.0);
+    final albumSize = screenWidth * 0.8;
     if (song.coverArt != null) {
       return Container(
-        width: 250,
-        height: 250,
+        width: albumSize,
+        height: albumSize,
         decoration: _buildAlbumArtDecoration(),
         child: ClipOval(
           child: Image.asset(
@@ -158,8 +231,47 @@ class PlayerScreen extends StatelessWidget {
           _buildDuration(),
           const SizedBox(height: 30),
           const PlayerControls(),
+          const SizedBox(height: 20),
+          _buildExtraControls(), // <-- Новая секция
         ],
       ),
+    );
+  }
+
+  /// Дополнительные элементы управления
+  Widget _buildExtraControls() {
+    return Row(
+      mainAxisAlignment:
+          MainAxisAlignment.spaceEvenly, // Равномерно распределяет
+      children: [
+        _buildControlButton(Icons.repeat, 'Повтор'),
+        _buildControlButton(Icons.shuffle, 'Перемешать'),
+        _buildControlButton(Icons.favorite_border, 'В избранное'),
+        _buildControlButton(Icons.playlist_add, 'В плейлист'),
+      ],
+    );
+  }
+
+  /// Кнопка с иконкой и подписью
+  Widget _buildControlButton(IconData icon, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          color: Colors.white.withOpacity(0.8),
+          size: 24,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.6),
+            fontSize: 10,
+            fontFamily: 'Montserrat',
+          ),
+        ),
+      ],
     );
   }
 
